@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mom's Daily Planner - Embed Code</title>
+    <style>
+        .planner-embed {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            background: white;
+        }
+        
+        .planner-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%; /* Adjust based on your planner height needs */
+            height: 0;
+        }
+        
+        .planner-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .planner-embed {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            
+            .planner-container {
+                padding-bottom: 120%; /* Taller on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="planner-embed">
+        <div class="planner-container">
+            <iframe 
+                class="planner-frame"
+                src="YOUR_REPLIT_URL_HERE"
+                frameborder="0"
+                allowfullscreen
+                allow="geolocation; microphone; camera"
+                title="Mom's Daily Planner - Plan Your Perfect Day">
+            </iframe>
+        </div>
+    </div>
+
+    <!-- Alternative: Direct embed without iframe wrapper -->
+    <!-- 
+    <iframe 
+        src="YOUR_REPLIT_URL_HERE"
+        width="100%" 
+        height="800"
+        frameborder="0"
+        style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);"
+        title="Mom's Daily Planner">
+    </iframe>
+    -->
+</body>
+</html>

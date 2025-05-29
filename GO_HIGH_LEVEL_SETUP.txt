@@ -1,0 +1,196 @@
+# Go High Level Setup Guide for Mom's Daily Planner
+
+This guide provides step-by-step instructions for configuring Go High Level to work with the Mom's Daily Planner application. Proper setup ensures seamless automation and contact management.
+
+## 🚀 Overview
+
+The Mom's Daily Planner integrates with Go High Level through three automated workflows:
+1. **Contact Creation** - When mothers first sign up
+2. **Reminder Opt-in** - When mothers choose to receive notifications  
+3. **Schedule Access** - When mothers click their daily schedule links
+
+## 📋 Required Custom Fields
+
+Before setting up webhooks, you MUST create these custom fields in your Go High Level location:
+
+### Text Fields (Single Line)
+- `planner_url` - Stores the working schedule link for each mother
+- `planner_custom_field_1` - Stores action codes (schedule_created, reminder_optin, working_schedule_accessed)
+- `planner_custom_field_2` - Stores the schedule ID for tracking
+- `source` - Identifies traffic source as "moms_daily_planner"
+
+### Tag Field (Multi-Select)
+- `momsplanner_tag` - Stores tags like "moms_planner", "working_schedule_link", "reminder_optin"
+
+### Legacy Support (if needed)
+- `Planner Tags` - Alternative tag field name for backward compatibility
+
+## 🔗 Webhook Configuration
+
+### Webhook 1: Contact Creation
+**Purpose**: Creates new contacts when mothers sign up
+**Trigger URL**: [Your GHL webhook URL for contact creation]
+
+**Expected Data Fields**:
+```json
+{
+  "firstName": "Mother's first name",
+  "email": "mother@example.com", 
+  "phone": "1234567890",
+  "source": "moms_daily_planner",
+  "Planner Tags": "moms_planner",
+  "plannerUrl": "https://yoursite.com/schedule/schedule_id",
+  "action": "user_signup",
+  "scheduleId": "unique_schedule_identifier",
+  "timestamp": "2025-05-28T03:00:15.671Z"
+}
+```
+
+### Webhook 2: Reminder Opt-in
+**Purpose**: Tracks mothers who want to receive reminder notifications
+**Trigger URL**: [Your GHL webhook URL for reminder setup]
+
+**Expected Data Fields**:
+```json
+{
+  "firstName": "Mother's first name",
+  "email": "mother@example.com",
+  "phone": "1234567890", 
+  "source": "moms_daily_planner",
+  "momsplanner_tag": "reminder_optin,moms_planner",
+  "planner_url": "https://yoursite.com/schedule/schedule_id",
+  "planner_custom_field_1": "reminder_optin",
+  "planner_custom_field_2": "schedule_id"
+}
+```
+
+### Webhook 3: Schedule Access (Encouraging Email)
+**Purpose**: Sends encouraging emails when mothers access their schedules
+**Trigger URL**: [Your GHL webhook URL for encouraging emails]
+
+**Expected Data Fields**:
+```json
+{
+  "first_name": "Mother's first name",
+  "email": "mother@example.com",
+  "phone": "1234567890",
+  "source": "moms_daily_planner", 
+  "momsplanner_tag": "working_schedule_link,moms_planner",
+  "planner_url": "https://yoursite.com/schedule/schedule_id",
+  "planner_custom_field_1": "working_schedule_accessed",
+  "planner_custom_field_2": "schedule_id"
+}
+```
+
+## ⚙️ Automation Setup
+
+### Automation 1: Welcome & Contact Creation
+**Trigger**: Webhook 1 (Contact Creation)
+**Actions**:
+1. Create or update contact with provided information
+2. Add "moms_planner" tag
+3. Store schedule URL in `planner_url` custom field
+4. Send welcome email or SMS (optional)
+
+### Automation 2: Reminder Setup
+**Trigger**: Webhook 2 (Reminder Opt-in) 
+**Actions**:
+1. Add "reminder_optin" tag to contact
+2. Enroll in daily reminder sequence
+3. Set up recurring SMS or email reminders
+4. Update custom fields with reminder preferences
+
+### Automation 3: Encouraging Email
+**Trigger**: Webhook 3 (Schedule Access)
+**Actions**:
+1. Send encouraging email from "Mother V"
+2. Add "working_schedule_link" tag
+3. Track schedule engagement
+4. Optional: Trigger follow-up sequences
+
+## 📧 Email Template Variables
+
+When creating email templates in Go High Level, use these variables:
+
+- `{{contact.first_name}}` - Mother's first name
+- `{{contact.email}}` - Mother's email address
+- `{{contact.phone}}` - Mother's phone number
+- `{{contact.planner_url}}` - Working schedule link (IMPORTANT: Use this for schedule links)
+- `{{contact.planner_custom_field_1}}` - Action code
+- `{{contact.planner_custom_field_2}}` - Schedule ID
+
+## 🔧 Webhook URLs Configuration
+
+In the Mom's Daily Planner application, update these webhook URLs in `server/routes.ts`:
+
+```javascript
+// Webhook 1: Contact Creation
+const CONTACT_CREATION_WEBHOOK = "YOUR_GHL_WEBHOOK_URL_1";
+
+// Webhook 2: Reminder Opt-in  
+const REMINDER_OPTIN_WEBHOOK = "YOUR_GHL_WEBHOOK_URL_2";
+
+// Webhook 3: Schedule Access
+const SCHEDULE_ACCESS_WEBHOOK = "YOUR_GHL_WEBHOOK_URL_3";
+```
+
+## ⚠️ Common Issues & Solutions
+
+### Issue: "Contact could not be Created/Updated as no differentiation field value was provided"
+**Solution**: Ensure both email AND phone fields contain valid data. The webhook sends real contact information, not empty fields.
+
+### Issue: Custom fields not populating
+**Solution**: Verify custom field names match exactly (case-sensitive):
+- `planner_url` (not `plannerUrl`)  
+- `planner_custom_field_1` (not `planner_custom_field_1`)
+- `momsplanner_tag` (not `momsplanner_tags`)
+
+### Issue: Tags not applying
+**Solution**: Check tag field configuration. Use either `momsplanner_tag` or `Planner Tags` consistently.
+
+### Issue: Schedule links not working in emails
+**Solution**: Always use `{{contact.planner_url}}` in email templates, not `{{contact.plannerUrl}}`.
+
+## 🧪 Testing Process
+
+1. **Clear all test contacts** from Go High Level
+2. **Complete full user journey**:
+   - Sign up as new mother
+   - Create daily schedule
+   - Opt in for reminders
+   - Click schedule link
+3. **Verify each automation triggers** with real contact data
+4. **Check custom fields populate** correctly
+5. **Test email template variables** display proper information
+
+## 📞 Support & Troubleshooting
+
+### Check Webhook Logs
+- Go High Level provides webhook execution logs
+- Look for 200 status codes (success) vs error codes
+- Verify expected data fields are received
+
+### Field Mapping Issues
+- Custom fields must exist BEFORE webhook sends data
+- Field names are case-sensitive
+- Use exact field names as specified in this guide
+
+### Contact Creation Problems
+- Ensure email OR phone is provided (both recommended)
+- Check for duplicate contacts with same email/phone
+- Verify location settings allow contact creation
+
+## 🎯 Success Metrics
+
+When properly configured, you should see:
+- ✅ New contacts automatically created in Go High Level
+- ✅ Custom fields populated with schedule data
+- ✅ Tags applied correctly for segmentation
+- ✅ Email automations triggered when mothers access schedules
+- ✅ Working schedule links in all email communications
+
+---
+
+**Important**: All custom fields must be created BEFORE the first webhook test. Missing fields will cause data loss and automation failures.
+
+**Contact Support**: If webhooks continue failing after following this guide, check your Go High Level location settings and custom field configuration.

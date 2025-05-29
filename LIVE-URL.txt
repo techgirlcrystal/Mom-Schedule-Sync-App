@@ -1,0 +1,18 @@
+Mom's Daily Planner - Live URLs
+
+Try these URLs to test your planner:
+
+Option 1 (Primary): https://rest-express--replit-user-aireplit.repl.co
+Option 2 (Alternative): https://replit.com/@replit-user-aireplit/rest-express
+Option 3 (Direct): Click "Open in new tab" button in your Replit interface
+
+Website Embed Code (copy and paste into your website):
+<iframe src="https://rest-express--replit-user-aireplit.repl.co" width="100%" height="800" frameborder="0" style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);" title="Mom's Daily Planner"></iframe>
+
+Features Ready:
+✅ Daily planning with Christian focus
+✅ KJV Bible scriptures and prayers
+✅ Go High Level contact integration
+✅ Google Calendar sync
+✅ SMS opt-in for daily encouragement
+✅ Mobile responsive design
